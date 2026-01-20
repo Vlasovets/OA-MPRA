@@ -192,7 +192,7 @@ All top hits reproducible across replicates with robust statistical support.
 
 ### Key Findings
 
-1. **Screen Success:** Identified 23 high-confidence enhancers (0.95% hit rate) suitable for orthogonal validation
+1. **Screen Success:** Identified 23 high-confidence enhancers (0.95% hit rate) suitable for Validation
 2. **No Silencers:** Consistent with activator-biased library design; expected result
 3. **Top Hits by Effect Size:** scr_157_rep3 (3.32-fold, strongest), rs4644_Mut_rep4 (2.83-fold, most robust), rs2756122_WT_rep2 (2.72-fold)
 4. **Top Hits by Statistical Confidence:** rs11740553_WT_rep2 (FDR=0.0003), rs4644_Mut_rep4 (FDR=0.0004) - see `all_variants_ranked.csv` for FDR-sorted list
@@ -232,8 +232,7 @@ All top hits reproducible across replicates with robust statistical support.
 
 ### Immediate Actions
 
-1. **Orthogonal Validation**
-   - Luciferase reporter assays for top 5 enhancers (prioritize rs11740553_WT/Mut, rs4644_Mut)
+1. **Validation**
    - CRISPRi/CRISPRa functional validation in relevant cell lines
    - Test allele-specific effects for rs11740553 (both WT and Mut are significant)
 
@@ -333,6 +332,6 @@ This MPRA screen successfully identified **23 high-confidence enhancers** (0.95%
 - **By statistical confidence:** rs11740553_WT_rep2 (FDR=0.0003), rs4644_Mut_rep4 (FDR=0.0004)
 - **Optimal balance:** rs4644_Mut_rep4 combines strong effect (2.83-fold) with robust statistics (FDR=0.0004, n=8)
 
-All candidates are **publication-ready** pending orthogonal validation. Complete ranked lists available in `results/mpra_analysis/` directory.
+All candidates are **publication-ready** pending Validation. Complete ranked lists available in `results/mpra_analysis/` directory.
 
 **Key Technical Issue:** Barcode extraction was highly successful (389K barcodes with DNA & RNA in OA_1 alone), but 99% have insufficient read counts (DNA<10 or RNA<3). The limitation is **skewed count distribution** across barcodes, not total sequencing depth. This explains the modest 2.5 barcodes/variant coverage and suggests optimization of library complexity or amplification protocols for future screens. Despite this limitation, current results provide strong foundation for functional follow-up studies with FDR-controlled statistical rigor.
