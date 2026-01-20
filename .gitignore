@@ -1,0 +1,43 @@
+# Large data files
+*.gz
+*.bam
+*.fastq
+*.fq
+
+# Large result files
+*.pkl
+*.pickle
+
+# Python cache
+__pycache__/
+*.py[cod]
+*$py.class
+.Python
+*.so
+
+# Jupyter Notebook checkpoints
+.ipynb_checkpoints/
+
+# VS Code
+.vscode/
+
+# Environment
+.env
+.venv
+env/
+venv/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Large directories (can be adjusted)
+real_data/
+archive/
+tmp_singularity/
+singularity_cache/
+apptainer_images/
+
+# Keep these patterns but exclude from Git
+results/**/data_filtered.pkl
+results/**/variant_activities.pkl

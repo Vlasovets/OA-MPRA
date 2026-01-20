@@ -1,0 +1,13 @@
+{
+  "total_observations": 11657,
+  "unique_barcodes": 10139,
+  "unique_variants": 4007,
+  "replicates": [
+    "OA_1",
+    "OA_2",
+    "OA_3",
+    "OA_4"
+  ],
+  "barcode_column": "AAAAAAAAACTG",
+  "variant_column": "rs9415066_WT_rep1"
+}

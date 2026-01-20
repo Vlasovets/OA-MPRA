@@ -1,0 +1,126 @@
+---
+version: "0.5"
+assignments:
+  assignMPRAworkshopMinSupport1: ### the best results so far
+    bc_length: 12 ### bc length verified original length 13, but we trimmed 1bp
+    # BC_rev_comp: true ### tried both
+    alignment_tool:
+      split_number: 30
+      tool: bbmap
+      configs:
+        sequence_length: 151 ### length verified original length 151, but we trimmed 1bp
+        alignment_start: 1
+        min_mapping_quality: 30   #  ~1 in 1000 chance the mapping is wrong
+    FW:
+      - /lustre/groups/itg/teams/zeggini/projects/GO2/MPRA/mpra_test/real_data/assignment/reverse/24L005276_S11_L001_R2_001.r2trim.fastq.gz ### use R2 as forward reads
+    BC:
+      - /lustre/groups/itg/teams/zeggini/projects/GO2/MPRA/mpra_test/real_data/assignment/forward/24L005276_S11_L001_R1_first12bp.fastq.gz  ### only 12bp barcodes file which you get from the forward reads after trimming the first bp which was random
+    REV:
+      - /lustre/groups/itg/teams/zeggini/projects/GO2/MPRA/mpra_test/real_data/assignment/reverse/24L005276_S11_L001_R2_001.r2trim.revcomp.fastq.gz ### use reverse complemented R2 reads as reverse reads
+
+    design_file: /lustre/groups/itg/teams/zeggini/projects/GO2/MPRA/mpra_test/real_data/assignment/designed_oligos_first149bp_with_CC.fasta ### CC + length of R2 trimmed version
+
+    configs:
+      default:
+        min_support: 1  #  A barcode must appear at least k times across all reads to be considered for assignment.
+        fraction: 0.7  #  If a barcode appears 10 times, at least 8 of those must align to the same oligo. (Faye used 0.25 in her pipeline)
+
+  # assignR2OnlyMinSupport1Exact:
+  #   bc_length: 12 ### bc length verified original length 13, but we trimmed 1bp
+  #   alignment_tool:
+  #     split_number: 30
+  #     tool: exact
+  #     configs:
+  #       sequence_length: 151 ### length verified original length 151, but we trimmed 1bp
+  #       alignment_start: 1
+  #   FW:
+  #     - /lustre/groups/itg/teams/zeggini/projects/GO2/MPRA/mpra_test/real_data/assignment/reverse/24L005276_S11_L001_R2_001.fastq.gz ### use R2 as forward reads
+  #   BC:
+  #     - /lustre/groups/itg/teams/zeggini/projects/GO2/MPRA/mpra_test/real_data/assignment/forward/24L005276_S11_L001_R1_first12bp.fastq.gz  ### only 12bp barcodes file
+  #   design_file: /lustre/groups/itg/teams/zeggini/projects/GO2/MPRA/mpra_test/real_data/assignment/designed_oligos_first149bp_with_CC.fasta ### CC + length of R2 trimmed version
+  #   configs:
+  #     default:
+  #       min_support: 1  
+  #       fraction: 0.51
+
+  # assignMinSupport1:
+  #   bc_length: 12
+  #   alignment_tool:
+  #     split_number: 30
+  #     tool: bbmap
+  #     configs:
+  #       sequence_length: 151 ### length verified original length 151, but we trimmed 1bp
+  #       alignment_start: 1
+  #       min_mapping_quality: 30   #  ~1 in 1000 chance the mapping is wrong
+  #   FW:
+  #     - /lustre/groups/itg/teams/zeggini/projects/GO2/MPRA/mpra_test/real_data/assignment/reverse/24L005276_S11_L001_R2_001.fastq.gz ### use R2 as forward reads
+  #   REV:
+  #     - /lustre/groups/itg/teams/zeggini/projects/GO2/MPRA/mpra_test/real_data/assignment/reverse/24L005276_S11_L001_R2_001.revcomp.fastq.gz ### use reverse complemented R2 reads as reverse reads
+  #   BC:
+  #     - /lustre/groups/itg/teams/zeggini/projects/GO2/MPRA/mpra_test/real_data/assignment/forward/24L005276_S11_L001_R1_first12bp.fastq.gz  ### only 12bp barcodes file
+  #   design_file: /lustre/groups/itg/teams/zeggini/projects/GO2/MPRA/mpra_test/real_data/assignment/designed_oligos_first149bp_with_CC.fasta ### CC + length of R2 trimmed version
+  #   configs:
+  #     default:
+  #       min_support: 1 
+  #       fraction: 0.7
+  
+  # assignR2OnlyMinSupport1:
+  #   bc_length: 12
+  #   alignment_tool:
+  #     split_number: 30
+  #     tool: bbmap
+  #     configs:
+  #       sequence_length: 151 ### length verified original length 151, but we trimmed 1bp
+  #       alignment_start: 1
+  #       min_mapping_quality: 30   #  ~1 in 1000 chance the mapping is wrong
+  #   FW:
+  #     - /lustre/groups/itg/teams/zeggini/projects/GO2/MPRA/mpra_test/real_data/assignment/reverse/24L005276_S11_L001_R2_001.fastq.gz ### use R2 as forward reads
+  #   BC:
+  #     - /lustre/groups/itg/teams/zeggini/projects/GO2/MPRA/mpra_test/real_data/assignment/forward/24L005276_S11_L001_R1_first12bp.fastq.gz  ### only 12bp barcodes file
+  #   design_file: /lustre/groups/itg/teams/zeggini/projects/GO2/MPRA/mpra_test/real_data/assignment/designed_oligos_first149bp_with_CC.fasta ### CC + length of R2 trimmed version
+  #   configs:
+  #     default:
+  #       min_support: 1 
+  #       fraction: 0.7
+
+  # assignR2OnlyMinSupport3:
+  #   bc_length: 12
+  #   alignment_tool:
+  #     split_number: 30
+  #     tool: bbmap
+  #     configs:
+  #       sequence_length: 151 ### length verified original length 151, but we trimmed 1bp
+  #       alignment_start: 1
+  #       min_mapping_quality: 30   #  ~1 in 1000 chance the mapping is wrong
+  #   FW:
+  #     - /lustre/groups/itg/teams/zeggini/projects/GO2/MPRA/mpra_test/real_data/assignment/reverse/24L005276_S11_L001_R2_001.fastq.gz ### use R2 as forward reads
+  #   BC:
+  #     - /lustre/groups/itg/teams/zeggini/projects/GO2/MPRA/mpra_test/real_data/assignment/forward/24L005276_S11_L001_R1_first12bp.fastq.gz  ### only 12bp barcodes file
+  #   design_file: /lustre/groups/itg/teams/zeggini/projects/GO2/MPRA/mpra_test/real_data/assignment/designed_oligos_first149bp_with_CC.fasta ### CC + length of R2 trimmed version
+  #   configs:
+  #     default:
+  #       min_support: 3  #  A barcode must appear at least k times across all reads to be considered for assignment.
+  #       fraction: 0.7  #  If a barcode appears 10 times, at least 8 of those must align to the same oligo. (Faye used 0.25 in her pipeline)
+  # assignMPRAworkshop:
+  #   bc_length: 12 ### bc length verified original length 13, but we trimmed 1bp
+  #   # BC_rev_comp: true ### tried both
+  #   alignment_tool:
+  #     split_number: 30
+  #     tool: bbmap
+  #     configs:
+  #       sequence_length: 151 ### length verified original length 151, but we trimmed 1bp
+  #       alignment_start: 1
+  #       min_mapping_quality: 30   #  ~1 in 1000 chance the mapping is wrong
+  #   FW:
+  #     - /lustre/groups/itg/teams/zeggini/projects/GO2/MPRA/mpra_test/real_data/assignment/reverse/24L005276_S11_L001_R2_001.r2trim.fastq.gz ### use R2 as forward reads
+  #   BC:
+  #     - /lustre/groups/itg/teams/zeggini/projects/GO2/MPRA/mpra_test/real_data/assignment/forward/24L005276_S11_L001_R1_first12bp.fastq.gz  ### only 12bp barcodes file which you get from the forward reads after trimming the first bp which was random
+  #   REV:
+  #     - /lustre/groups/itg/teams/zeggini/projects/GO2/MPRA/mpra_test/real_data/assignment/reverse/24L005276_S11_L001_R2_001.r2trim.revcomp.fastq.gz ### use reverse complemented R2 reads as reverse reads
+
+  #   design_file: /lustre/groups/itg/teams/zeggini/projects/GO2/MPRA/mpra_test/real_data/assignment/designed_oligos_first149bp_with_CC.fasta ### CC + length of R2 trimmed version
+
+  #   configs:
+  #     default:
+  #       min_support: 3  #  A barcode must appear at least k times across all reads to be considered for assignment.
+  #       fraction: 0.7  #  If a barcode appears 10 times, at least 8 of those must align to the same oligo. (Faye used 0.25 in her pipeline)

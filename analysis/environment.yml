@@ -1,0 +1,34 @@
+name: mpra_analysis
+channels:
+  - conda-forge
+  - bioconda
+  - defaults
+
+dependencies:
+  # Python and packages
+  - python=3.10
+  - pandas
+  - numpy
+  - matplotlib
+  - seaborn
+  - scipy
+  - jupyterlab
+  - ipython
+  
+  # R and packages
+  - r-base=4.3
+  - r-tidyverse
+  - r-devtools
+  - r-jsonlite
+  - r-rmarkdown
+  
+  # Build tools for R package installation
+  - compilers
+  - make
+  - cmake
+  
+  # Additional utilities
+  - pip
+  
+  # Install BCalm from GitHub via pip after environment creation
+  # Run: R -e "devtools::install_github('kircherlab/BCalm')"

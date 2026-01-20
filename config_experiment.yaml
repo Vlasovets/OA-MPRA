@@ -1,0 +1,49 @@
+version: "0.5"
+experiments:
+  exampleCount:
+    bc_length: 12
+    data_folder: /lustre/groups/itg/teams/zeggini/projects/GO2/MPRA/mpra_test/real_data/counts
+    experiment_file: /lustre/groups/itg/teams/zeggini/projects/GO2/MPRA/mpra_test/real_data/experiment/experiment.csv
+    demultiplex: false
+    assignments:
+      fromFile:
+        type: file
+        assignment_file: /lustre/groups/itg/teams/zeggini/projects/GO2/MPRA/mpra_test/results/assignment/assignMPRAworkshopMinSupport1/assignment_barcodes.default.tsv.gz
+    design_file:  /lustre/groups/itg/teams/zeggini/projects/GO2/MPRA/mpra_test/real_data/assignment/designed_oligos_first149bp_with_CC.fasta
+    # label_file: labels.tsv
+    configs:
+      default: {}
+      outlierZscore:
+        filter:
+          outlier_detection:
+            method: rna_counts_zscore
+
+### TO DO: ask Max about the last couple of rules which did not finish sucessfullyly
+
+# version: '0.5'
+# experiments:
+#   experiment_count:
+#     bc_length: 12
+#     data_folder: /lustre/groups/itg/teams/zeggini/projects/GO2/MPRA/mpra_test/real_data/counts
+#     experiment_file: /lustre/groups/itg/teams/zeggini/projects/GO2/MPRA/mpra_test/real_data/experiment/experiment.csv
+#     demultiplex: false
+#     assignments:
+#       fromFile:
+#         type: file
+#         assignment_file: /lustre/groups/itg/teams/zeggini/projects/GO2/MPRA/mpra_test/results/assignment/assignMPRAworkshopMinSupport1/assignment_barcodes.default.tsv.gz
+#     design_file: /lustre/groups/itg/teams/zeggini/projects/GO2/MPRA/mpra_test/real_data/assignment/designed_oligos_first149bp_with_CC.fasta
+#     configs:
+#       default:
+#         filter:
+#           bc_threshold: 1
+#           min_dna_counts: 1
+#           min_rna_counts: 1
+#           outlier_detection:
+#             times_zscore: 3
+#       tutorialConfig:
+#         filter:
+#           bc_threshold: 1
+#           min_dna_counts: 1
+#           min_rna_counts: 1
+#           outlier_detection:
+#             times_zscore: 3
