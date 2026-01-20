@@ -41,3 +41,54 @@ apptainer_images/
 # Keep these patterns but exclude from Git
 results/**/data_filtered.pkl
 results/**/variant_activities.pkl
+
+# Snakemake
+.snakemake/
+
+# Cache directories
+.cache/
+.ipython/
+.local/
+
+# Container files
+libpod/
+
+# Result backups
+results/
+results_back_up/
+results_best/
+
+# Example data
+example_data/
+
+# Backup/copy files
+*_copy.ipynb
+
+# Snakemake and workflow files
+.snakemake/
+profiles/
+
+# System/cache directories
+.cache/
+.github/
+.ipython/
+.local/
+libpod/
+
+# Docker
+Dockerfile
+
+# Tutorial notebooks and example data
+tutorial_*.ipynb
+example_data/
+assignment_OA_copy.ipynb
+
+# Alternative configs and docs
+config_combined.yaml
+versions.txt
+README.md
+
+# Large result directories
+results/
+results_back_up/
+results_best/
