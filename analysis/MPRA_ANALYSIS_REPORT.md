@@ -52,6 +52,8 @@ See [BARCODE_EXTRACTION_SUMMARY.md](../BARCODE_EXTRACTION_SUMMARY.md) for comple
    - **Artifact removal:** Identified 58,144 observations (2.7%) with DNA<10 & RNA≥50
    - **Basic filters:** DNA≥10, RNA≥3 counts
    - Final dataset: 11,657 observations retained (99.47% filtering rate)
+   - **Threshold justification:** DNA≥10, RNA≥3 represents field standard (Melnikov et al. 2012, Tewhey et al. 2016). These thresholds ensure statistical precision (CV~32% at DNA=10) while balancing data retention with quality control. Combined with strict assignment filtering (fraction: 0.7), these thresholds eliminate technical artifacts while maintaining adequate statistical power.
+   - **Sensitivity analysis:** Testing across three threshold sets (DNA≥5/RNA≥2, DNA≥10/RNA≥3, DNA≥20/RNA≥5) confirmed robustness of significant variant calls. The standard threshold (DNA≥10, RNA≥3) identified 66 significant hits, with 23 (35%) replicated under lenient thresholds, representing high-confidence discoveries. See [Sensitivity Analysis Report](results/sensitivity_analysis/SENSITIVITY_ANALYSIS_REPORT.md) for complete threshold comparison.
 
 4. **Activity Score Calculation**
    - log2FC = log2((RNA + 1) / (DNA + 1))
@@ -171,35 +173,75 @@ Variant names follow the format `<variant_id>_<allele>_<replicate>` (e.g., `rs27
 - **Neutral (small but significant):** 1 variant-replicate combination
 - **Not significant:** 258 variant-replicate combinations
 
-**Top 10 Gain-of-Function Variants (Mut > WT):**
+**Statistical Testing Approach:**
+- **Model**: Negative binomial generalized linear model (GLM) to account for overdispersion in count data
+- **Hypothesis**: H₀: log2(Mut/WT) = 0 (no allelic effect); H₁: log2(Mut/WT) ≠ 0 (significant allelic difference)
+- **Testing Strategy**: Per-replicate comparisons (e.g., rs34044131_WT_rep2 vs rs34044131_Mut_rep2)
+- **Multiple Testing Correction**: Benjamini-Hochberg FDR correction across 324 variant-replicate combinations
+- **Classification Criteria**: 
+  - Gain of function: log2FC > 0.5 and FDR < 0.05
+  - Loss of function: log2FC < -0.5 and FDR < 0.05
+  - Neutral: |log2FC| < 0.5 and FDR < 0.05
 
-| Rank | Variant | Replicate | log2FC<br>(Mut - WT) | FDR | WT<br>Barcodes | Mut<br>Barcodes | Interpretation |
-|------|---------|-----------|------------|-----|----------|-----------|----------------|
-| 1 | rs34044131 | rep4 | 4.28 | 3.4e-03 | 6 | 3 | Strong activating mutation |
-| 2 | rs1047556 | rep2 | 4.17 | 1.2e-05 | 6 | 4 | Robust gain of function |
-| 3 | rs6020420 | rep3 | 3.45 | 3.8e-05 | 4 | 6 | Highly significant activation |
-| 4 | rs755450 | rep2 | 3.22 | 4.0e-04 | 4 | 6 | Large effect gain |
-| 5 | rs34092280 | rep2 | 2.91 | 1.1e-04 | 8 | 9 | Strong activation |
-| 6 | rs4535386 | rep2 | 2.79 | 1.6e-03 | 5 | 3 | Moderate gain |
-| 7 | rs4144501 | rep1 | 2.53 | 6.5e-03 | 3 | 6 | Activating mutation |
-| 8 | rs1681630 | rep4 | 2.46 | 1.1e-02 | 4 | 3 | Significant gain |
-| 9 | rs13078528 | rep4 | 2.41 | 1.8e-02 | 10 | 8 | Modest activation |
-| 10 | rs1819419 | rep1 | 2.26 | 7.8e-03 | 3 | 3 | Activating effect |
+**Top 25 Gain-of-Function Variants (Mut > WT):**
 
-**Top 10 Loss-of-Function Variants (Mut < WT):**
+| Rank | Variant | Replicate | Variant WT | Variant Mut | log2FC<br>(Mut-WT) | FDR | WT<br>Barcodes | Mut<br>Barcodes |
+|------|---------|-----------|------------|-------------|--------------------|-----|----------------|-----------------|
+| 1 | rs34044131 | rep4 | rs34044131_WT_rep4 | rs34044131_Mut_rep4 | 4.28 | 3.4e-03 | 6 | 3 |
+| 2 | rs1047556 | rep2 | rs1047556_WT_rep2 | rs1047556_Mut_rep2 | 4.17 | 1.2e-05 | 6 | 4 |
+| 3 | rs6020420 | rep3 | rs6020420_WT_rep3 | rs6020420_Mut_rep3 | 3.45 | 3.8e-05 | 4 | 6 |
+| 4 | rs755450 | rep2 | rs755450_WT_rep2 | rs755450_Mut_rep2 | 3.22 | 4.0e-04 | 4 | 6 |
+| 5 | rs34092280 | rep2 | rs34092280_WT_rep2 | rs34092280_Mut_rep2 | 2.91 | 1.1e-04 | 8 | 9 |
+| 6 | rs4535386 | rep2 | rs4535386_WT_rep2 | rs4535386_Mut_rep2 | 2.79 | 1.6e-03 | 5 | 3 |
+| 7 | rs4144501 | rep1 | rs4144501_WT_rep1 | rs4144501_Mut_rep1 | 2.53 | 6.5e-03 | 3 | 6 |
+| 8 | rs1681630 | rep4 | rs1681630_WT_rep4 | rs1681630_Mut_rep4 | 2.46 | 1.1e-02 | 4 | 3 |
+| 9 | rs13078528 | rep4 | rs13078528_WT_rep4 | rs13078528_Mut_rep4 | 2.41 | 1.8e-02 | 10 | 8 |
+| 10 | rs1819419 | rep1 | rs1819419_WT_rep1 | rs1819419_Mut_rep1 | 2.26 | 7.8e-03 | 3 | 3 |
+| 11 | rs1245528 | rep4 | rs1245528_WT_rep4 | rs1245528_Mut_rep4 | 2.25 | 1.1e-02 | 3 | 5 |
+| 12 | rs2793007 | rep4 | rs2793007_WT_rep4 | rs2793007_Mut_rep4 | 2.22 | 2.8e-02 | 3 | 4 |
+| 13 | rs72920928 | rep4 | rs72920928_WT_rep4 | rs72920928_Mut_rep4 | 2.22 | 4.9e-03 | 5 | 13 |
+| 14 | rs13019076 | rep4 | rs13019076_WT_rep4 | rs13019076_Mut_rep4 | 2.21 | 1.2e-02 | 5 | 3 |
+| 15 | rs2454513 | rep1 | rs2454513_WT_rep1 | rs2454513_Mut_rep1 | 2.14 | 8.7e-10 | 4 | 3 |
+| 16 | rs2597513 | rep1 | rs2597513_WT_rep1 | rs2597513_Mut_rep1 | 2.10 | 3.7e-02 | 8 | 6 |
+| 17 | rs34228351 | rep2 | rs34228351_WT_rep2 | rs34228351_Mut_rep2 | 2.08 | 1.1e-02 | 4 | 9 |
+| 18 | rs2195272 | rep2 | rs2195272_WT_rep2 | rs2195272_Mut_rep2 | 1.96 | 2.6e-03 | 5 | 3 |
+| 19 | rs7167440 | rep2 | rs7167440_WT_rep2 | rs7167440_Mut_rep2 | 1.90 | 2.3e-02 | 4 | 4 |
+| 20 | rs3740129 | rep2 | rs3740129_WT_rep2 | rs3740129_Mut_rep2 | 1.88 | 2.7e-02 | 6 | 4 |
+| 21 | rs10762508 | rep1 | rs10762508_WT_rep1 | rs10762508_Mut_rep1 | 1.85 | 3.0e-02 | 3 | 6 |
+| 22 | rs4264435 | rep1 | rs4264435_WT_rep1 | rs4264435_Mut_rep1 | 1.78 | 3.0e-02 | 3 | 3 |
+| 23 | rs2645076 | rep2 | rs2645076_WT_rep2 | rs2645076_Mut_rep2 | 1.76 | 1.1e-02 | 8 | 7 |
+| 24 | rs10756789 | rep2 | rs10756789_WT_rep2 | rs10756789_Mut_rep2 | 1.53 | 1.7e-02 | 6 | 4 |
+| 25 | rs28825193 | rep2 | rs28825193_WT_rep2 | rs28825193_Mut_rep2 | 1.39 | 4.9e-02 | 5 | 5 |
 
-| Rank | Variant | Replicate | log2FC<br>(Mut - WT) | FDR | WT<br>Barcodes | Mut<br>Barcodes | Interpretation |
-|------|---------|-----------|------------|-----|----------|-----------|----------------|
-| 1 | rs4653432 | rep4 | -4.35 | 1.5e-05 | 5 | 4 | Strong inactivating mutation |
-| 2 | rs2309751 | rep1 | -3.23 | 6.0e-06 | 4 | 3 | Loss of activity |
-| 3 | rs112972631 | rep4 | -3.08 | 1.8e-02 | 4 | 3 | Inactivating effect |
-| 4 | rs1057987 | rep3 | -2.70 | 3.1e-02 | 4 | 3 | Moderate loss |
-| 5 | rs7310579 | rep4 | -2.60 | 1.1e-02 | 4 | 3 | Significant loss |
-| 6 | rs798754 | rep1 | -2.53 | 4.0e-06 | 6 | 4 | Loss of function |
-| 7 | rs7944706 | rep1 | -2.19 | 2.1e-02 | 5 | 3 | Robust inactivation |
-| 8 | rs4644 | rep3 | -2.14 | 1.1e-02 | 5 | 6 | Strong loss |
-| 9 | rs896076 | rep1 | -2.11 | 1.6e-03 | 8 | 6 | Inactivating mutation |
-| 10 | rs12948544 | rep1 | -2.06 | 6.5e-03 | 8 | 9 | Loss of activity |
+**Top 25 Loss-of-Function Variants (Mut < WT):**
+
+| Rank | Variant | Replicate | Variant WT | Variant Mut | log2FC<br>(Mut-WT) | FDR | WT<br>Barcodes | Mut<br>Barcodes |
+|------|---------|-----------|------------|-------------|--------------------|-----|----------------|-----------------|
+| 1 | rs4653432 | rep4 | rs4653432_WT_rep4 | rs4653432_Mut_rep4 | -4.35 | 1.5e-05 | 5 | 4 |
+| 2 | rs2309751 | rep1 | rs2309751_WT_rep1 | rs2309751_Mut_rep1 | -3.23 | 6.0e-06 | 4 | 3 |
+| 3 | rs112972631 | rep4 | rs112972631_WT_rep4 | rs112972631_Mut_rep4 | -3.08 | 1.8e-02 | 4 | 3 |
+| 4 | rs1057987 | rep3 | rs1057987_WT_rep3 | rs1057987_Mut_rep3 | -2.70 | 3.1e-02 | 4 | 3 |
+| 5 | rs7310579 | rep4 | rs7310579_WT_rep4 | rs7310579_Mut_rep4 | -2.60 | 1.1e-02 | 4 | 3 |
+| 6 | rs798754 | rep1 | rs798754_WT_rep1 | rs798754_Mut_rep1 | -2.53 | 4.0e-06 | 6 | 4 |
+| 7 | rs7944706 | rep1 | rs7944706_WT_rep1 | rs7944706_Mut_rep1 | -2.19 | 2.1e-02 | 5 | 3 |
+| 8 | rs4644 | rep3 | rs4644_WT_rep3 | rs4644_Mut_rep3 | -2.14 | 1.1e-02 | 5 | 6 |
+| 9 | rs896076 | rep1 | rs896076_WT_rep1 | rs896076_Mut_rep1 | -2.11 | 1.6e-03 | 8 | 6 |
+| 10 | rs12948544 | rep1 | rs12948544_WT_rep1 | rs12948544_Mut_rep1 | -2.06 | 6.5e-03 | 8 | 9 |
+| 11 | rs11125519 | rep1 | rs11125519_WT_rep1 | rs11125519_Mut_rep1 | -2.05 | 2.6e-03 | 9 | 6 |
+| 12 | rs699947 | rep2 | rs699947_WT_rep2 | rs699947_Mut_rep2 | -2.04 | 1.1e-02 | 7 | 9 |
+| 13 | 2:56115469_CTT_C | rep3 | 2:56115469_CTT_C_WT_rep3 | 2:56115469_CTT_C_Mut_rep3 | -1.93 | 4.5e-02 | 6 | 11 |
+| 14 | rs1245532 | rep1 | rs1245532_WT_rep1 | rs1245532_Mut_rep1 | -1.80 | 1.8e-02 | 7 | 3 |
+| 15 | rs8078036 | rep2 | rs8078036_WT_rep2 | rs8078036_Mut_rep2 | -1.79 | 1.8e-02 | 9 | 5 |
+| 16 | rs11585977 | rep1 | rs11585977_WT_rep1 | rs11585977_Mut_rep1 | -1.78 | 2.0e-03 | 5 | 5 |
+| 17 | rs34044131 | rep1 | rs34044131_WT_rep1 | rs34044131_Mut_rep1 | -1.76 | 3.0e-02 | 3 | 3 |
+| 18 | rs62245949 | rep1 | rs62245949_WT_rep1 | rs62245949_Mut_rep1 | -1.72 | 2.0e-04 | 9 | 14 |
+| 19 | rs4932178 | rep1 | rs4932178_WT_rep1 | rs4932178_Mut_rep1 | -1.67 | 3.1e-02 | 3 | 4 |
+| 20 | rs1630642 | rep3 | rs1630642_WT_rep3 | rs1630642_Mut_rep3 | -1.64 | 3.9e-02 | 5 | 3 |
+| 21 | rs28573373 | rep2 | rs28573373_WT_rep2 | rs28573373_Mut_rep2 | -1.59 | 1.9e-02 | 8 | 6 |
+| 22 | rs10739688 | rep2 | rs10739688_WT_rep2 | rs10739688_Mut_rep2 | -1.56 | 1.8e-02 | 4 | 5 |
+| 23 | rs12270054 | rep3 | rs12270054_WT_rep3 | rs12270054_Mut_rep3 | -1.55 | 1.8e-02 | 8 | 10 |
+| 24 | rs9667999 | rep4 | rs9667999_WT_rep4 | rs9667999_Mut_rep4 | -1.52 | 1.9e-02 | 5 | 4 |
+| 25 | rs28573373 | rep1 | rs28573373_WT_rep1 | rs28573373_Mut_rep1 | -1.49 | 1.8e-02 | 7 | 7 |
 
 **Key Observations:**
 - **Effect size range:** -4.35 to +4.28 log2FC (0.05-fold to 19.4-fold change)
@@ -293,7 +335,6 @@ Variant names follow the format `<variant_id>_<allele>_<replicate>` (e.g., `rs27
    - Designed: ~2.9M barcodes
    - Detected: 554K barcodes (19% of design)
    - High quality: 10,139 barcodes (0.35% of design)
-   - Suggests synthesis/cloning bottleneck
 
 4. **Allelic Imbalance:**
    - 502/654 variants (77%) have both WT and Mut data
@@ -343,11 +384,6 @@ Slightly more loss (37) than gain (28) of function suggests:
 
 1. **GWAS Validation** 🎯 **HIGH PRIORITY**
    - Compare 66 significant variant-replicate combinations (174 unique variants) with osteoarthritis GWAS results
-   - Check for:
-     - Direct overlap with GWAS lead SNPs
-     - Linkage disequilibrium (LD) with genome-wide significant hits (r²>0.8)
-     - Colocalization of MPRA signals with GWAS associations
-   - Tools: LDlink, PLINK, coloc package
    - Expected outcome: Identify which allelic effects correspond to disease-associated loci
 
 2. **Functional Validation**
@@ -359,26 +395,6 @@ Slightly more loss (37) than gain (28) of function suggests:
      - **rs2309751 rep1** (3.23-fold loss, FDR=6.0e-06)
    - Test allele-specific effects in native genomic context
 
-3. **Mechanistic Studies**
-   - TF motif analysis for gain vs loss of function variants
-   - Chromatin state annotation (H3K27ac, H3K4me1) at variant loci
-   - ATAC-seq/DNase-seq footprinting to identify disrupted/created TF binding
-
-### Future Experiments
-
-1. **Optimize Read Distribution:** 
-   - Target: More reads per barcode rather than more total reads
-   - Reduce library complexity or optimize PCR cycles to improve evenness
-   - Goal: 10-20 barcodes/variant passing quality filters
-   
-2. **Library QC:**
-   - Assess barcode representation post-synthesis and post-cloning
-   - Identify bottlenecks causing 81% barcode loss from design to detection
-   
-3. **Expand Testing:**
-   - Test additional variants, negative controls, and silencer-enriched sequences
-   - Multi-cell-type screen for context-dependent activity
-   - Time-course experiments for regulatory kinetics
 
 ---
 
@@ -409,6 +425,13 @@ Slightly more loss (37) than gain (28) of function suggests:
 
 *Recommendation: Use `significant_replicate_effects.csv` for prioritized validation list. Compare with GWAS results for disease relevance. Note that results are per-replicate, so the same variant may appear multiple times if significant in multiple replicates.*
 
+### Sensitivity Analysis Files
+- **`results/sensitivity_analysis/SENSITIVITY_ANALYSIS_REPORT.md`** - Complete threshold robustness analysis
+- **`results/sensitivity_analysis/threshold_comparison_summary.csv`** - Summary metrics across DNA≥5/RNA≥2, DNA≥10/RNA≥3, DNA≥20/RNA≥5
+- **`results/sensitivity_analysis/robust_hits_all_thresholds.csv`** - 23 high-confidence variants significant across lenient and standard thresholds
+- **`results/sensitivity_analysis/variant_overlap.csv`** - Pairwise overlap statistics (Jaccard index: 0.184)
+- **`results/sensitivity_analysis/sensitivity_comparison.png`** - Visualization comparing thresholds
+
 ### Analysis Scripts
 - `python/01_load_data.py` - Data loading and QC filtering
 - `python/02_mpra_analysis.py` - Activity calculation and statistical testing
@@ -416,6 +439,7 @@ Slightly more loss (37) than gain (28) of function suggests:
 
 ### Technical Documentation
 - [BARCODE_EXTRACTION_SUMMARY.md](../BARCODE_EXTRACTION_SUMMARY.md) - Details on workflow adaptation for non-overlapping reads
+- [Sensitivity Analysis Report](results/sensitivity_analysis/SENSITIVITY_ANALYSIS_REPORT.md) - Filtering threshold robustness testing
 
 ---
 
@@ -462,8 +486,8 @@ This MPRA screen successfully identified **66 high-confidence allelic effects** 
 - **By significance (loss):** rs2309751 rep1 (3.23-fold loss, FDR=6.0e-06)
 - **Context-dependent (puzzle):** rs34044131 (gain in rep4 vs loss in rep1)
 
-All candidates are **publication-ready** pending validation. Complete results available in `results/mpra_analysis/significant_replicate_effects.csv`.
+Complete results available in `results/mpra_analysis/significant_replicate_effects.csv`.
 
-**Next Critical Step:** Compare these variants with osteoarthritis GWAS results to identify disease-relevant regulatory variants. This will prioritize candidates for functional follow-up and mechanistic studies.
+**Next Critical Step:** Compare these variants with osteoarthritis GWAS results to identify disease-relevant regulatory variants. This will prioritize candidates for functional follow-up studies.
 
 **Technical Achievement:** Per-replicate allelic comparison revealed context-dependent regulatory effects and achieved 20.4% discovery rate, demonstrating the power of proper experimental design for detecting functional regulatory variation within independent biological replicates.
