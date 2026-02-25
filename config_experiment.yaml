@@ -1,49 +1,51 @@
 version: "0.5"
 experiments:
-  exampleCount:
+  exampleCountMinSupport1:
     bc_length: 12
-    data_folder: /lustre/groups/itg/teams/zeggini/projects/GO2/MPRA/mpra_test/real_data/counts
-    experiment_file: /lustre/groups/itg/teams/zeggini/projects/GO2/MPRA/mpra_test/real_data/experiment/experiment.csv
+    data_folder: /lustre/groups/itg/teams/zeggini/projects/GO2/MPRA/mpra_test/real_data/counts_barcodes_offset0
+    experiment_file: /lustre/groups/itg/teams/zeggini/projects/GO2/MPRA/mpra_test/real_data/counts_barcodes_offset0/experiment_BARCODEONLY_offset0.csv
     demultiplex: false
     assignments:
       fromFile:
         type: file
         assignment_file: /lustre/groups/itg/teams/zeggini/projects/GO2/MPRA/mpra_test/results/assignment/assignMPRAworkshopMinSupport1/assignment_barcodes.default.tsv.gz
-    design_file:  /lustre/groups/itg/teams/zeggini/projects/GO2/MPRA/mpra_test/real_data/assignment/designed_oligos_first149bp_with_CC.fasta
-    # label_file: labels.tsv
+    design_file: /lustre/groups/itg/teams/zeggini/projects/GO2/MPRA/mpra_test/real_data/assignment/designed_oligos_first149bp_with_CC.fasta
     configs:
-      default: {}
-      outlierZscore:
+      default:
         filter:
+          bc_threshold: 1
+          min_dna_counts: 5      # Increase from 1 to reduce noise
+          min_rna_counts: 10     # Increase from 1 to reduce noise
           outlier_detection:
             method: rna_counts_zscore
+            times_zscore: 3      # Remove barcodes >3 stdev from mean
 
-### TO DO: ask Max about the last couple of rules which did not finish sucessfullyly
+  # exampleCountMinSupport3:
+  #   bc_length: 12
+  #   data_folder: /lustre/groups/itg/teams/zeggini/projects/GO2/MPRA/mpra_test/real_data/counts_barcodes_offset0
+  #   experiment_file: /lustre/groups/itg/teams/zeggini/projects/GO2/MPRA/mpra_test/real_data/counts_barcodes_offset0/experiment_BARCODEONLY_offset0.csv
+  #   demultiplex: false
+  #   assignments:
+  #     fromFile:
+  #       type: file
+  #       assignment_file: /lustre/groups/itg/teams/zeggini/projects/GO2/MPRA/mpra_test/results/assignment/assignMPRAworkshopMinSupport1/assignment_barcodes.default.tsv.gz
+  #   design_file: /lustre/groups/itg/teams/zeggini/projects/GO2/MPRA/mpra_test/real_data/assignment/designed_oligos_first149bp_with_CC.fasta
+  #   configs:
+  #     default:
+  #       filter:
+  #         bc_threshold: 3
 
-# version: '0.5'
-# experiments:
-#   experiment_count:
-#     bc_length: 12
-#     data_folder: /lustre/groups/itg/teams/zeggini/projects/GO2/MPRA/mpra_test/real_data/counts
-#     experiment_file: /lustre/groups/itg/teams/zeggini/projects/GO2/MPRA/mpra_test/real_data/experiment/experiment.csv
-#     demultiplex: false
-#     assignments:
-#       fromFile:
-#         type: file
-#         assignment_file: /lustre/groups/itg/teams/zeggini/projects/GO2/MPRA/mpra_test/results/assignment/assignMPRAworkshopMinSupport1/assignment_barcodes.default.tsv.gz
-#     design_file: /lustre/groups/itg/teams/zeggini/projects/GO2/MPRA/mpra_test/real_data/assignment/designed_oligos_first149bp_with_CC.fasta
-#     configs:
-#       default:
-#         filter:
-#           bc_threshold: 1
-#           min_dna_counts: 1
-#           min_rna_counts: 1
-#           outlier_detection:
-#             times_zscore: 3
-#       tutorialConfig:
-#         filter:
-#           bc_threshold: 1
-#           min_dna_counts: 1
-#           min_rna_counts: 1
-#           outlier_detection:
-#             times_zscore: 3
+  # exampleCountMinSupport5:
+  #   bc_length: 12
+  #   data_folder: /lustre/groups/itg/teams/zeggini/projects/GO2/MPRA/mpra_test/real_data/counts_barcodes_offset0
+  #   experiment_file: /lustre/groups/itg/teams/zeggini/projects/GO2/MPRA/mpra_test/real_data/counts_barcodes_offset0/experiment_BARCODEONLY_offset0.csv
+  #   demultiplex: false
+  #   assignments:
+  #     fromFile:
+  #       type: file
+  #       assignment_file: /lustre/groups/itg/teams/zeggini/projects/GO2/MPRA/mpra_test/results/assignment/assignMPRAworkshopMinSupport1/assignment_barcodes.default.tsv.gz
+  #   design_file: /lustre/groups/itg/teams/zeggini/projects/GO2/MPRA/mpra_test/real_data/assignment/designed_oligos_first149bp_with_CC.fasta
+  #   configs:
+  #     default:
+  #       filter:
+  #         bc_threshold: 5
