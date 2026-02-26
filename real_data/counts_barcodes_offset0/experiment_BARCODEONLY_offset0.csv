@@ -1,0 +1,5 @@
+Condition,Replicate,DNA_BC_F,RNA_BC_F
+OA,1,24L012064_S1_L001_R1_001_bc12_offset0.fastq.gz,24L007512_S1_L001_R1_001_bc12_offset0.fastq.gz
+OA,2,24L012065_S2_L001_R1_001_bc12_offset0.fastq.gz,24L007513_S2_L001_R1_001_bc12_offset0.fastq.gz
+OA,3,24L012066_S3_L001_R1_001_bc12_offset0.fastq.gz,24L007514_S3_L001_R1_001_bc12_offset0.fastq.gz
+OA,4,24L012067_S4_L001_R1_001_bc12_offset0.fastq.gz,24L007692_S5_L001_R1_001_bc12_offset0.fastq.gz
