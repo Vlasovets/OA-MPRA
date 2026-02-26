@@ -34,36 +34,13 @@
 | OA_1 | 24L012064_S1 | 24L007512_S1 | Batch 1 |
 | OA_2 | 24L012065_S2 | 24L007513_S2 | Batch 1 |
 | OA_3 | 24L012066_S3 | 24L007514_S3 | Batch 1 |
-| OA_4 | 24L012067_S4 | 24L007692_S5 | **Batch 2** ⚠️ |
+| OA_4 | 24L012067_S4 | 24L007**692**_S5 | **Batch 2?** ⚠️ |
 
-**Note:** Rep 4 RNA is from a different sequencing batch, which may introduce batch effects.
+**Note:** Rep 4 RNA might be from a different sequencing batch, which may introduce batch effects.
 
 ---
 
 ## Data Preprocessing
-
-### Initial Approach (FAILED)
-**Problem Identified:** Incorrect barcode extraction method
-
-**Attempted Pipeline:**
-```bash
-# WRONG: Extracted position 18-30 from R1 (oligo sequence, not barcode)
-awk 'NR%4==2 {print substr($0,19,12)}'  # Offset 18
-```
-
-**Issues:**
-- Created BAM files using `paste` merging R2 + R2revcomp
-- BAM creation jobs timed out after 6+ hours
-- MergeTrimReadsBAM_python3.py TypeError: "object of type 'NoneType' has no len()"
-- Extracted sequences were **oligo sequences**, not actual barcodes
-
-**Validation:**
-```
-R1[1:12]  = "GTCGACGTTAGA" ✓ Actual barcode
-R1[19:30] = "CTCATTACTTGT" → revcomp = "ACAAGTAATGAG" ✗ Part of oligo sequence
-```
-
-### Corrected Approach (SUCCESS)
 
 **Script:** `extract_barcodes_offset0.sh`
 
@@ -144,10 +121,8 @@ filter:
 ```
 
 **Workflow Execution:**
-- Job ID: 33883083
-- Duration: 13 minutes 28 seconds (14:51:20 → 15:04:48)
+- Duration: 13 minutes 28 seconds
 - Steps completed: 119/119 (100%)
-- Status: ✓ SUCCESS
 
 **Results:**
 | Metric | Value |
@@ -240,7 +215,6 @@ filter:
 - Best pairs show strong ratio improvements
 - Excessive data loss (40% of oligos)
 - Overall correlation still decreased
-- Not recommended for final analysis
 
 ---
 
@@ -248,7 +222,7 @@ filter:
 
 ### Key Findings
 
-#### 1. **Batch Effect Identified** ⚠️
+#### 1. **Batch Effect Identified**
 - **Rep 4 RNA** is from a different sequencing batch (24L007692 vs 24L007512-514)
 - Manifests as poor correlations between Rep 4 and Reps 2-3
 - Rep 1-4 correlation remains high (0.805) despite batch difference
@@ -292,28 +266,13 @@ filter:
 #### 1. **Use bc_threshold=1 for Maximum Coverage**
 - Retains 86.73% of oligos (6,737/7,696)
 - Highest overall correlation (0.214)
-- Best for exploratory analysis and maximizing power
 
 #### 2. **Consider Excluding Rep 2**
 - Rep 2 shows consistently poor correlations with all replicates
 - Analysis with Rep 1, 3, 4 may improve overall quality
 - Would retain biological replicates across different batches
 
-#### 3. **Enable Outlier Detection**
-Add to config:
-```yaml
-filter:
-  bc_threshold: 1
-  min_dna_counts: 5      # Increase from 1 to reduce noise
-  min_rna_counts: 10     # Increase from 1 to reduce noise
-  outlier_detection:
-    method: rna_counts_zscore
-    times_zscore: 3      # Remove barcodes >3 stdev from mean
-```
-
-Expected improvement: 15-25% increase in correlation
-
-#### 4. **Analyze Best Replicate Pair Separately**
+#### 3. **Analyze Best Replicate Pair Separately**
 - Rep 1 + 4 already show excellent correlation (0.805)
 - Use as "gold standard" for validating biological signals
 - Can inform whether other replicates are adding noise or signal
@@ -339,68 +298,6 @@ Expected improvement: 15-25% increase in correlation
 - Best for validating top candidates
 - Lower statistical power (n=2)
 
-### Technical Improvements for Future Experiments
-
-1. **Sequencing Depth**
-   - Target uniform depth across replicates (aim for 20-30M RNA reads)
-   - Ensure all replicates sequenced in same batch
-
-2. **DNA Library**
-   - Increase DNA sequencing depth to achieve >10 counts/barcode
-   - Improves DNA/RNA ratio stability
-
-3. **Barcode Assignment**
-   - Current assignment quality is excellent (99.07%)
-   - No changes needed
-
-4. **Quality Control**
-   - Implement outlier detection in standard pipeline
-   - Monitor batch effects during sequencing
-
----
-
-## File Locations
-
-### Raw Data
-```
-/lustre/groups/itg/teams/zeggini/projects/GO2/MPRA/mpra_test/real_data/
-├── DNA/forward/           # DNA samples R1
-├── cDNA/forward/          # RNA samples R1
-└── assignment/            # Design files and assignment data
-```
-
-### Processed Barcodes
-```
-/lustre/groups/itg/teams/zeggini/projects/GO2/MPRA/mpra_test/real_data/counts_barcodes_offset0/
-├── 24L012064-67_S1-4_R1_001_bc12_offset0.fastq.gz  # DNA barcodes
-├── 24L007512-14_S1-3_R1_001_bc12_offset0.fastq.gz  # RNA barcodes (batch 1)
-└── 24L007692_S5_R1_001_bc12_offset0.fastq.gz       # RNA barcodes (batch 2)
-```
-
-### Results
-```
-/home/itg/oleg.vlasovets/projects/MPRA_data/mpra_test/results/
-├── assignment/
-│   └── assignMPRAworkshopMinSupport1/
-│       ├── assignment_barcodes.default.tsv.gz
-│       └── qc_metrics.default.json
-└── experiments/
-    ├── exampleCountMinSupport1/  # bc_threshold=1
-    ├── exampleCountMinSupport3/  # bc_threshold=3
-    └── exampleCountMinSupport5/  # bc_threshold=5
-```
-
-### Configuration Files
-```
-/home/itg/oleg.vlasovets/projects/MPRA_data/mpra_test/
-├── config_assignment.yaml                    # Assignment configuration
-├── config_experiment.yaml                    # Multi-threshold experiment
-├── config_experiment_CORRECTED_offset0.yaml  # Original working config
-├── config_experiment_improved.yaml           # Improved filtering configs
-├── extract_barcodes_offset0.sh              # Barcode extraction script
-├── run_assignment.sh                         # SLURM assignment job
-└── run_experiment.sh                         # SLURM experiment job
-```
 
 ---
 
@@ -424,42 +321,36 @@ Expected improvement: 15-25% increase in correlation
 
 ## Troubleshooting History
 
-### Issue 1: BAM Creation Timeouts
-**Problem:** Jobs failed after 6+ hours with no progress  
-**Root Cause:** Using wrong barcode offset (18 vs 0)  
-**Solution:** Direct barcode extraction from R1[1:12]  
-**Result:** Workflow completed in 13 minutes
+### Issue: Barcode Counting Logic in `counts_noUMI.smk`
 
-### Issue 2: Config Schema Validation Errors
-**Problem:** KeyError: 'min_rna_counts'  
-**Root Cause:** Missing required filter parameters  
-**Solution:** Added min_dna_counts and min_rna_counts to all configs  
-**Result:** Workflow runs successfully
+**Problem:** Raw count files contained full merged sequences (~300bp) instead of barcode counts, breaking downstream analysis
 
-### Issue 3: Low Overall Correlation
-**Problem:** Pearson r=0.21 despite successful workflow  
-**Root Cause:** Batch effects + replicate quality variability  
-**Solution:** Identified batch effect, proposed filtered analyses  
-**Result:** Actionable recommendations for improvement
+**Root Cause:** 
+Original awk command extracted entire merged read ($10) without subsetting to barcode region
+Missing `uniq -c` step meant sequences were listed but not counted
+Output format was raw sequences instead of required barcode<tab>count TSV format
+
+**Solution:** Modified `experiment_counts_noUMI_raw_counts` rule shell command
+
+**Changes:** are in the [fork](https://github.com/Vlasovets/MPRAsnakeflow/blob/feat/allow_single_end_reads/workflow/rules/experiment/counts/counts_noUMI.smk), no pull request made (let me know if needed)
+- Added bc_length parameter to rule
+- Used substr($10, 1, bc_len) to extract only first 12bp (barcode)
+- Added uniq -c to count barcode occurrences
+- Added second awk to reformat from count barcode → barcode<tab>count
+
+**Result:** QC report is generated and the experiment pipelines finishes all the steps
 
 ---
 
-## Conclusions
+## Remarks
 
-1. **Barcode extraction correction was critical** - switching from offset 18 to offset 0 enabled successful workflow completion in minutes vs hours of failures
-
-2. **Assignment quality is excellent** (99.07%) - no issues with barcode-to-oligo mapping
+1. **Assignment quality is excellent** (99.07%) - no issues with barcode-to-oligo mapping
 
 3. **Replicate quality is variable** - Rep 1-4 pair shows excellent correlation (0.805), while Rep 2-4 is poor (0.173)
 
-4. **Batch effects are present** - Rep 4 RNA from different sequencing batch contributes to variability
-
 5. **Threshold filtering trade-offs** - Stricter bc_threshold improves signal-to-noise in high-quality pairs but reduces overall correlation and loses substantial data
-
-6. **Recommended approach:** Use bc_threshold=1 with increased min_dna_counts (5) and min_rna_counts (10) plus outlier detection for optimal balance
 
 ---
 
-**Report Generated:** February 12, 2026  
+**Report Generated:** February 26, 2026  
 **Pipeline Version:** MPRAsnakeflow 0.5.4  
-**Analysis Code:** Available in `/home/itg/oleg.vlasovets/projects/MPRA_data/mpra_test/`
