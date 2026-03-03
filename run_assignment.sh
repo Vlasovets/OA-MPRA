@@ -36,11 +36,13 @@ command -v snakemake >/dev/null 2>&1 || { echo "ERROR: snakemake not found (cond
 # 3.5) Change to the working directory where results should be created
 cd /lustre/groups/itg/teams/zeggini/projects/GO2/MPRA/mpra_test/
 
+snakemake --snakefile /home/itg/oleg.vlasovets/projects/MPRAsnakeflow/workflow/Snakefile --configfile /home/itg/oleg.vlasovets/projects/MPRA_data/mpra_test/config_assignment_v06.yaml --unlock
+
 # 4) Run assignment with your Slurm profile
 snakemake \
   --profile /home/itg/oleg.vlasovets/.snakemake_profile \
   --snakefile  /home/itg/oleg.vlasovets/projects/MPRAsnakeflow/workflow/Snakefile \
-  --configfile /lustre/groups/itg/teams/zeggini/projects/GO2/MPRA/mpra_test/config_assignment.yaml \
+  --configfile /home/itg/oleg.vlasovets/projects/MPRA_data/mpra_test/config_assignment_v06.yaml \
   --software-deployment-method conda apptainer \
   --apptainer-args "-B $TMPDIR -B $HOME/.cache/snakemake/snakemake/ -B /lustre/groups/itg/teams/zeggini/projects/GO2/MPRA/mpra_test/" \
   --apptainer-prefix "$HOME/apptainer_images" \
