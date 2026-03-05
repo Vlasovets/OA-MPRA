@@ -10,7 +10,7 @@ experiments:
     assignments:
       fromFile:
         type: file
-        assignment_file: /lustre/groups/itg/teams/zeggini/projects/GO2/MPRA/mpra_test/results/assignment/assignMPRAworkshop_v06/assignment_barcodes.default.tsv.gz
+        assignment_file: /lustre/groups/itg/teams/zeggini/projects/GO2/MPRA/mpra_test/results/assignment/assign_bc_rev_comp_true_v06/assignment_barcodes.default.tsv.gz
     design_file: /lustre/groups/itg/teams/zeggini/projects/GO2/MPRA/mpra_test/real_data/assignment/designed_oligos_first149bp_with_CC.fasta
     configs:
       default:
@@ -31,7 +31,7 @@ experiments:
     assignments:
       fromFile:
         type: file
-        assignment_file: /lustre/groups/itg/teams/zeggini/projects/GO2/MPRA/mpra_test/results/assignment/assignMPRAworkshop_v06/assignment_barcodes.default.tsv.gz
+        assignment_file: /lustre/groups/itg/teams/zeggini/projects/GO2/MPRA/mpra_test/results/assignment/assign_bc_rev_comp_true_v06/assignment_barcodes.default.tsv.gz
     design_file: /lustre/groups/itg/teams/zeggini/projects/GO2/MPRA/mpra_test/real_data/assignment/designed_oligos_first149bp_with_CC.fasta
     configs:
       default:
@@ -47,7 +47,7 @@ experiments:
     assignments:
       fromFile:
         type: file
-        assignment_file: /lustre/groups/itg/teams/zeggini/projects/GO2/MPRA/mpra_test/results/assignment/assignMPRAworkshop_v06/assignment_barcodes.default.tsv.gz
+        assignment_file: /lustre/groups/itg/teams/zeggini/projects/GO2/MPRA/mpra_test/results/assignment/assign_bc_rev_comp_true_v06/assignment_barcodes.default.tsv.gz
     design_file: /lustre/groups/itg/teams/zeggini/projects/GO2/MPRA/mpra_test/real_data/assignment/designed_oligos_first149bp_with_CC.fasta
     configs:
       default:
