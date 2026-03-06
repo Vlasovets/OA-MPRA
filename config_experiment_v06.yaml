@@ -1,7 +1,7 @@
 ---
 version: "0.6"
 experiments:
-  exampleCountMinSupport1:
+  examplenoMinCount1:
     bc_length: 12
     bc_extraction: start  # Extract BC from start of read (default, but explicit for clarity)
     data_folder: /lustre/groups/itg/teams/zeggini/projects/GO2/MPRA/mpra_test/real_data/counts_barcodes_offset0
@@ -16,13 +16,13 @@ experiments:
       default:
         filter:
           bc_threshold: 1
-          min_dna_counts: 5      # Increase from 1 to reduce noise
-          min_rna_counts: 10     # Increase from 1 to reduce noise
-          outlier_detection:
-            method: rna_counts_zscore
-            times_zscore: 3      # Remove barcodes >3 stdev from mean
+      noMinCount:
+        filter:
+          bc_threshold: 1
+          min_dna_counts: 0
+          min_rna_counts: 0
 
-  exampleCountMinSupport3:
+  examplenoMinCount3:
     bc_length: 12
     bc_extraction: start
     data_folder: /lustre/groups/itg/teams/zeggini/projects/GO2/MPRA/mpra_test/real_data/counts_barcodes_offset0
@@ -37,8 +37,13 @@ experiments:
       default:
         filter:
           bc_threshold: 3
+      noMinCount:
+        filter:
+          bc_threshold: 3
+          min_dna_counts: 0
+          min_rna_counts: 0
 
-  exampleCountMinSupport5:
+  examplenoMinCount5:
     bc_length: 12
     bc_extraction: start
     data_folder: /lustre/groups/itg/teams/zeggini/projects/GO2/MPRA/mpra_test/real_data/counts_barcodes_offset0
@@ -53,3 +58,9 @@ experiments:
       default:
         filter:
           bc_threshold: 5
+      noMinCount:
+        filter:
+          bc_threshold: 5
+          min_dna_counts: 0
+          min_rna_counts: 0
+          
